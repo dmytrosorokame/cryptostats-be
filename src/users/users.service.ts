@@ -1,7 +1,12 @@
 import { UsersRepository } from './users.repository';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto, UserResponse } from './dto';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { User } from './models/User';
 
 @Injectable()
@@ -13,7 +18,7 @@ export class UsersService {
   }
 
   private async validateCreateUser(dto: CreateUserDto): Promise<void> {
-    const user = this.usersRepo.findOneByEmail(dto.email);
+    const user = await this.usersRepo.findOneByEmail(dto.email);
 
     if (user) {
       throw new BadRequestException('user already exists');
@@ -29,6 +34,22 @@ export class UsersService {
       ...dto,
       password: hashedPassword,
     });
+
+    return this.prepareResponse(user);
+  }
+
+  async validateUser(email: string, password: string): Promise<UserResponse> {
+    const user = await this.usersRepo.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(`not found user with email: ${email}`);
+    }
+
+    const passwordIsValid = await compare(password, user.password);
+
+    if (!passwordIsValid) {
+      throw new UnauthorizedException('credentials are invalid');
+    }
 
     return this.prepareResponse(user);
   }
