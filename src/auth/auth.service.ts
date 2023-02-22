@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-interface ITokenPayload {
+export interface ITokenPayload {
   userId: string;
 }
 

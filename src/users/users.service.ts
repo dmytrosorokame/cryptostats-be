@@ -53,4 +53,14 @@ export class UsersService {
 
     return this.prepareResponse(user);
   }
+
+  async getUserById(id: string): Promise<UserResponse> {
+    const user = await this.usersRepo.findOneById(id);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return this.prepareResponse(user);
+  }
 }
