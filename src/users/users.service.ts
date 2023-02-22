@@ -38,6 +38,16 @@ export class UsersService {
     return this.prepareResponse(user);
   }
 
+  async updateUser(userId: string, data: Partial<User>): Promise<UserResponse> {
+    const user = await this.usersRepo.updateOne(userId, data);
+
+    if (!user) {
+      throw new NotFoundException(`user not found by _id: ${userId}.`);
+    }
+
+    return this.prepareResponse(user);
+  }
+
   async validateUser(email: string, password: string): Promise<UserResponse> {
     const user = await this.usersRepo.findOneByEmail(email);
 
