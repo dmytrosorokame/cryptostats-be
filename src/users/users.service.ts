@@ -15,7 +15,11 @@ export class UsersService {
   constructor(private usersRepo: UsersRepository) {}
 
   private prepareResponse(user: User): UserResponse {
-    return { _id: user._id.toHexString(), email: user.email };
+    return {
+      _id: user._id.toHexString(),
+      email: user.email,
+      isCoinbaseAuthorize: !!user.coinbaseAuth,
+    };
   }
 
   private async validateCreateUser(dto: CreateUserDto): Promise<void> {
