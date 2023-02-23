@@ -1,11 +1,11 @@
 import { CoinbaseAuthService } from './coinbase-auth.service';
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('coinbase')
 export class CoinbaseController {
-  constructor(private coinbaseAuthService: CoinbaseAuthService) {}
+  constructor(private readonly coinbaseAuthService: CoinbaseAuthService) {}
 
   @Get('auth')
   @UseGuards(JwtAuthGuard)
