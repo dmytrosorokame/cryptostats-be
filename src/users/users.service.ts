@@ -8,6 +8,7 @@ import {
 import { CreateUserDto, UserResponse } from './dto';
 import { hash, compare } from 'bcrypt';
 import { User } from './models/User';
+import { CoinbaseAuth } from './models/CoinbaseAuth';
 
 @Injectable()
 export class UsersService {
@@ -72,5 +73,21 @@ export class UsersService {
     }
 
     return this.prepareResponse(user);
+  }
+
+  async getCoinbaseAuth(userId: string): Promise<CoinbaseAuth> {
+    const user = await this.usersRepo.findOneById(userId);
+
+    if (!user) {
+      throw new NotFoundException(`not found user with _id: ${userId}`);
+    }
+
+    if (!user.coinbaseAuth) {
+      throw new UnauthorizedException(
+        `user with _id: ${userId} has not authorized Coinbase.`,
+      );
+    }
+
+    return user.coinbaseAuth;
   }
 }
